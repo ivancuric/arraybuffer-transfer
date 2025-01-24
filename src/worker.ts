@@ -2,7 +2,9 @@
 // allegedly "accessing event.data in onmessage() is stealing time from the main thread."
 
 function readEvent(e: MessageEvent<ArrayBufferLike>) {
-  postMessage(e.data, [e.data]);
+  setTimeout(() => {
+    postMessage(e.data, [e.data]);
+  }, 0);
 }
 
 self.onmessage = (e: MessageEvent<ArrayBufferLike>) => {
