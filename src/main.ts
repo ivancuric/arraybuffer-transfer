@@ -35,7 +35,7 @@ function loop() {
     busy = true;
     worker.postMessage(buffer, [buffer]);
     fps.frame();
-  });
+  }, 0);
 }
 
 worker.onmessage = (e: MessageEvent) => {
