@@ -27,6 +27,12 @@ let buffer = pixels.buffer;
 let busy = false;
 let pause = true;
 
+function post() {
+  busy = true;
+  worker.postMessage(buffer, [buffer]);
+  fps.frame();
+}
+
 function loop() {
   if (busy) {
     return;
@@ -36,11 +42,7 @@ function loop() {
     return;
   }
 
-  setTimeout(() => {
-    busy = true;
-    worker.postMessage(buffer, [buffer]);
-    fps.frame();
-  }, 0);
+  setTimeout(post, 0);
 }
 
 worker.onmessage = (e: MessageEvent) => {

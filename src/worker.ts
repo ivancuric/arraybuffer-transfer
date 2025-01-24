@@ -7,6 +7,10 @@ function readEvent(e: MessageEvent<ArrayBufferLike>) {
   }, 0);
 }
 
+function post(e: MessageEvent<ArrayBufferLike>) {
+  postMessage(e.data, [e.data]);
+}
+
 self.onmessage = (e: MessageEvent<ArrayBufferLike>) => {
   readEvent(e);
 };
