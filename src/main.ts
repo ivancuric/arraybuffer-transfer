@@ -2,10 +2,7 @@
 // allegedly "accessing event.data in onmessage() is stealing time from the main thread."
 
 import './style.css';
-import MyWorker from './worker.ts?worker';
 import { FPS } from 'yy-fps';
-
-const worker = new MyWorker();
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -21,7 +18,8 @@ const fps = new FPS({
   FPS: 50000,
 });
 
-const responseEl = document.querySelector<HTMLParagraphElement>('#response')!;
+const worker = new Worker(new URL('./worker.ts', import.meta.url))
+
 const button = document.querySelector<HTMLButtonElement>('#ping')!;
 
 let pixels = new Uint8Array(4096 * 2160 * 4);
@@ -46,11 +44,9 @@ worker.onmessage = (e: MessageEvent) => {
   loop();
 };
 
-function readEvent(e: MessageEvent<ArrayBufferLike>) {
-  queueMicrotask(() => {
-    buffer = e.data;
-    pixels = new Uint8Array(buffer);
-  });
+function readEvent(e: MessageEvent<ArrayBuffer>) {
+  buffer = e.data;
+  pixels = new Uint8Array(buffer);
 }
 
 button.addEventListener('click', () => {
