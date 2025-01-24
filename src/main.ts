@@ -1,10 +1,10 @@
 // https://forum.babylonjs.com/t/efficient-web-worker-data-transfer-strategies/34994
 // allegedly "accessing event.data in onmessage() is stealing time from the main thread."
 
-import './style.css';
-import { FPS } from 'yy-fps';
+import "./style.css";
+import { FPS } from "yy-fps";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
   <div>
     <h1>Vite + Worker</h1>
     <div class="card">
@@ -18,16 +18,21 @@ const fps = new FPS({
   FPS: 50000,
 });
 
-const worker = new Worker(new URL('./worker.ts', import.meta.url))
+const worker = new Worker(new URL("./worker.ts", import.meta.url));
 
-const button = document.querySelector<HTMLButtonElement>('#ping')!;
+const button = document.querySelector<HTMLButtonElement>("#ping")!;
 
 let pixels = new Uint8Array(4096 * 2160 * 4);
 let buffer = pixels.buffer;
 let busy = false;
+let pause = true;
 
 function loop() {
   if (busy) {
+    return;
+  }
+
+  if (pause) {
     return;
   }
 
@@ -49,6 +54,13 @@ function readEvent(e: MessageEvent<ArrayBuffer>) {
   pixels = new Uint8Array(buffer);
 }
 
-button.addEventListener('click', () => {
-  loop();
+button.addEventListener("click", () => {
+  pause = !pause;
+  button.textContent = pause ? "start" : "stop";
+
+  if (!pause) {
+    loop();
+  } else {
+    return;
+  }
 });
